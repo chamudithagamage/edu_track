@@ -1,44 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../controllers/progress_tracker_controller.dart';
 
 class ProgressTrackerScreen extends StatelessWidget {
-  // Function to calculate progress for a task name
-  Future<Map<String, double>> _calculateTaskProgress() async {
-    // Query the Firestore collection for tasks
-    QuerySnapshot tasksSnapshot = await FirebaseFirestore.instance.collection('tasks').get();
-    var tasks = tasksSnapshot.docs;
-
-    Map<String, int> taskCount = {};
-    Map<String, int> taskCompletedCount = {};
-
-    for (var taskDoc in tasks) {
-      var task = taskDoc.data() as Map<String, dynamic>;
-      String taskName = task['taskName'] ?? 'Unknown Task';
-      bool isCompleted = task['completed'] ?? false;
-
-      // Count total tasks and completed tasks per task name
-      taskCount[taskName] = (taskCount[taskName] ?? 0) + 1;
-      if (isCompleted) {
-        taskCompletedCount[taskName] = (taskCompletedCount[taskName] ?? 0) + 1;
-      }
-    }
-
-    // Calculate progress for each task name
-    Map<String, double> taskProgress = {};
-    taskCount.forEach((taskName, totalTasks) {
-      int completedTasks = taskCompletedCount[taskName] ?? 0;
-      double progress = (totalTasks > 0) ? (completedTasks / totalTasks) * 100 : 0;
-      taskProgress[taskName] = progress;
-    });
-
-    return taskProgress;
-  }
+  final ProgressTrackerController _controller = ProgressTrackerController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('        Progress Tracker'),
+        title: const Text('Progress Tracker'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -53,7 +23,7 @@ class ProgressTrackerScreen extends StatelessWidget {
 
             // Display progress for each task name
             FutureBuilder<Map<String, double>>(
-              future: _calculateTaskProgress(),
+              future: _controller.calculateTaskProgress(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

@@ -12,7 +12,7 @@ class _TaskScreenState extends State<TaskScreen> {
   final TextEditingController _taskDetailsController = TextEditingController();
   DateTime? _selectedDate;
   String? _selectedPriority;
-  String? _selectedSubject; // Added variable to store selected subject
+  String? _selectedSubject;
 
   // List of 11 main subjects for OL
   final List<String> _subjects = [
@@ -42,25 +42,13 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   Future<void> _saveTask() async {
-    if (_selectedSubject == null ||
-        _taskDetailsController.text.isEmpty ||
-        _selectedPriority == null ||
-        _selectedDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
-      );
-      return;
-    }
-
-    final task = Task(
-      taskName: _selectedSubject!, // Now using the selected subject
-      taskDetails: _taskDetailsController.text,
-      priority: _selectedPriority!,
-      date: _selectedDate!,
-    );
-
     try {
-      await _taskController.addTask(task);
+      await _taskController.saveTask(
+        _selectedSubject!,
+        _taskDetailsController.text,
+        _selectedPriority!,
+        _selectedDate!,
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Task saved successfully!')),
@@ -70,7 +58,7 @@ class _TaskScreenState extends State<TaskScreen> {
       setState(() {
         _selectedPriority = null;
         _selectedDate = null;
-        _selectedSubject = null; // Reset the selected subject
+        _selectedSubject = null;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

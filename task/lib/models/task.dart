@@ -4,11 +4,14 @@ class Task {
   final String priority;
   final DateTime date;
 
+
+
   Task({
     required this.taskName,
     required this.taskDetails,
     required this.priority,
     required this.date,
+
   });
 
   Map<String, dynamic> toMap() {

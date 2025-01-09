@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:task/screens/task_edit_view.dart';
 import '../controllers/dashboard_controller.dart';
 import 'task_screen.dart';
 import 'resources_hub_youtube_view.dart';
 import 'open_ai_integration_view.dart';
 import 'progress_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -167,12 +169,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(isCompleted ? "Completed" : "Not Completed"),
-                                    Switch(
-                                      value: isCompleted,
-                                      activeColor: Colors.blue,
-                                      onChanged: (value) {
-                                        _controller.markTaskAsCompleted(taskId, value);
-                                      },
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(Icons.edit, color: Colors.blue),
+                                          onPressed: () {
+                                            // Navigate to TaskEditView on icon tap
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => TaskEditView(taskId: taskId, taskData: task),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        Switch(
+                                          value: isCompleted,
+                                          activeColor: Colors.blue,
+                                          onChanged: (value) {
+                                            _controller.markTaskAsCompleted(taskId, value);
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
